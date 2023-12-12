@@ -1,0 +1,19 @@
+SELECT TOP 500000
+   p.ra,p.dec,p.type,
+   p.u,p.g,p.r,p.i,p.z,
+   p.modelMagErr_u,p.modelMagErr_g,p.modelMagErr_r,
+   p.modelMagErr_i,p.modelMagErr_z,
+   s.specobjid,
+   ISNULL(s.z, -999) AS redshift, ISNULL(s.zErr,-999) AS redshiftErr,
+   g.h_alpha_flux, g.h_beta_flux, g.oiii_5007_flux, g.nii_6584_flux, 
+   g.h_alpha_flux_err, g.h_beta_flux_err, g.oiii_5007_flux_err, g.nii_6584_flux_err,
+   m.logMass, m.logMass_err
+FROM PhotoObj AS p
+   JOIN SpecObj AS s ON s.bestobjid = p.objid
+   JOIN galSpecLine AS g ON g.specobjid = s.specobjid
+   JOIN stellarMassFSPSGranWideNoDust AS m ON m.specobjid = s.specobjid
+WHERE
+   p.type = 3
+   AND p.ra>230.62156-5*0.4588 and p.ra<230.62156+5*0.4588
+   AND p.dec>27.70763-5*0.4588 and p.dec<27.70763+5*0.4588
+   AND s.z > 0.0 and s.z < 0.2
